@@ -1,0 +1,171 @@
+* [[https://github.com/sehqlr/zation][zation]]
+  An experimental document database for org-mode files, written in Haskell
+
+** What?
+   - Experimental :: I have no idea what I'm doing, but I have a pretty good idea of the end result and even if I don't get there, I'm going to learn stuff
+   - Document Database :: I want to make something similar to MongoDB, but instead of JSON documents, I want to store org-mode documents
+   - Org-mode files :: [[orgmode.org][org-mode]] is an emacs major mode and plaintext markup language
+   - Haskell :: it's that functional language that you've heard of, probably
+                       
+** Why?
+   There are three main reasons why I started this project:
+
+   1. I believe that org-mode is a really great markup language, but as of now,
+      it mostly lives in Emacs, which is not a UI that everyone has the time or
+      attention to learn. What if you could have a client/server architecture
+      for org-mode, where more UIs could be built around this great software?
+   2. I like to jump around different kinds of software development for my side
+      projects. Other projects I've started tried to be all MVP and focused, but
+      I'd get bored or stuck working on a narrow problem. This project has a lot
+      of different parts in it, so I can switch to different kinds of problems
+      when it suits me. I'm still going to be doing small chunks, but all the
+      chunks will be adding up to a whole.
+   3. This is the first project idea I've had where I know exactly what I want
+      out of it, and I don't care if anyone else likes it. This is mostly a
+      learning exercise for me, but I also know the problem that the software
+      will be solving for me.
+
+** Who?
+   As for now, it's just me. I'm building this mostly for myself, and the use
+   case is similar to that of SQLite -- a database that's just a file in your
+   file system, replacing a directory of org-mode files. Eventually, it may
+   expand to a daemon process that can hold all of your org-mode files on a
+   single machine, but not any further than that to start out with. If for some
+   reason people like this project, I'd like to expand to things like
+   replication, clusters, multiple clients accessing a database instance, &c.
+
+** How?
+   Now for technical details
+ 
+*** The Tech Stack
+
+**** Haskell Stack
+     Stack provides the packaging tooling for zation. After some experimentation
+     in an unstructured directory, I moved that code into a =haskeleton= project.
+
+**** Parsec
+     I chose the =parsec= parser combinator library mostly because there seems
+     to be a lot of reading materials online for it. My hope is that I'm going
+     to make my codebase modular enough that I'll be able to switch to a
+     different PC library if needed. My early experiements were actually in the
+     =ReadP= type from =base= because of a really nice blog post I read. That
+     post gave me the confidence that I could learn parser combinators, and then
+     I knew I could actually write this thing.
+
+***** TODO Add blog post link here
+      
+**** Tasty & Criterion
+     =tasty= came with =haskeleton= but it includes both =hspec= and
+     =QuickCheck=. I've used =hspec= and other BDD-style testing frameworks
+     before, and I'm really excited to learn how to use =QuickCheck=
+
+     As for =criterio=, I've never actually written any kind of benchmarking
+     tests, so that'll be a whole new subject for me to explore.
+
+**** Some kind of CLI lib, maybe Brick??
+
+**** Pandoc
+     The Pandoc library will then be used for exporting to other formats. I'm
+     thinking that I'll have Pandoc embedded for basic exporting, but include
+     instructions for using pandoc executable as well.
+
+**** Dhall
+     I'm going to use Dhall as the configuration language for this project. I've
+     been wanting to learn it for some time, and I think this will be a perfect
+     project for it.
+
+*** The roadmap
+
+**** Version 0.x release series
+     My goal is to implement the different parts of the org-mode markup from
+     easiest to hardest. This is my estimation of that, but I'm probably going
+     to get it wrong. For each feature listed, there will be two parts of the
+     release.
+
+     The first part of that release will be implementing the parser and the
+     printer for that feature. The parser portion will be able to read in data
+     and store it into the database. The printer portion will read data from the
+     database and pretty print it into two formats: org-mode, and Pandoc AST.
+
+     The second part of the release for that feature will include some basic
+     features based on org-mode's feature-set. Advanced features will be their
+     own releases. For example: I want to store multiple documents in the
+     database. When I get that done, file hyperlinks will be added.
+
+***** Parse outlines 
+      This is a good first step, because the markup is foundational yet simple,
+      and I can build a good CLI to extend.
+      - Parse headlines and load that into an n-tree
+      - print the outline as multiple asterisks, and as a single asterisk with indentation
+      - basic CRUD commands for the tree
+
+***** body text
+      - parse body text into leaves in the tree, with lists of paragraph blocks
+      - print them aligned with outline text and word wrapped
+      - CRUD for body text, and clone of occur for search
+
+***** ordered and unordered lists
+      - Parse ordered and unordered lists with the many supported tokens, and nesting
+      - Print lists with nesting and body text, indented correctly
+      - CRUD for lists
+      - configuration for indentation characters
+
+***** basic formatting
+      - parse and print formatting markup, except for hyperlinks and timestamps
+      - figure out the most efficient way of storing formatting info in database
+      - add ANSI escape codes for formatting to consoles, add formatting to Pandoc AST
+
+***** definition lists
+      - Parse and print definition lists
+      - dictionary-style API for these
+        
+***** blocks
+      With "blocks" I mean "sections of body text between BEGIN and END lines"
+      - Parse block sections, storing the specific kind of block in the data structure
+      - Creating a sum type for the different kind of blocks, extending the paragraph block
+      - CRUD for blocks, and commands to convert existing paragraphs to these new blocks
+      - executing code and literate programming in source code blocks comes later
+
+***** headline tags
+      - Parse tags in headlines
+      - Index tags in another part of the database
+      - CRUD for tags, displays views of tags and headlines with specific tag
+
+***** TOOD keywordssending the AST to the
+      - Parse =TODO= and =DONE= keywords (the default in org-mode). Configurable keywords come later
+      - basic agenda view, where headlines are displayed without heirarchy and filtered by keywords
+
+***** priority cookies in headlines
+      - Parse priority cookies in headlines
+      - agenda view with sorting based on priority
+
+***** checklists and progress cookies in headlines
+      - Parse checklist items within lists and progress cookies
+      - basic todo list functionality
+      - tracking and untracking progress on checklists
+
+***** hyperlinks
+      - Parse and print hyperlinks, starting with URLs
+      - API for searching for URLs, and opening them in a browser or sending to clipboard
+
+***** properties on headlines/subtrees
+      - Parse property drawers under a headline
+      - Display or hide properties when printing
+      - Property API (and associated CLI commands)
+
+***** options and comments
+      - Parse comments, including option comments
+      - Display or hide comments when printing
+      - Option API, including options embedded in properties
+    
+***** timestamps
+      - Parse timestamps, both active and inactive
+      - basic Calendar API, like quering for items, inserting timestamps
+
+***** scheduling keywords
+      - parse SCHEDULED and DEADLINE keywords for headlines
+      - agenda view sorting for scheduled items, but not agenda grid view
+        
+***** tables
+      - Parse org tables, but not formula syntax (I'm scared of that)
+      - basic CLI querying and CRUD'ing

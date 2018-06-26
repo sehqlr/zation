@@ -1,0 +1,79 @@
+# This YAML file describes your package. Stack will automatically generate a
+# Cabal file when you run `stack build`. See the hpack website for help with
+# this file: <https://github.com/sol/hpack>.
+name: zation
+version: '0.0.0'
+github: "sehqlr/zation"
+license: MIT
+author: "Sam Hatfield"
+maintainer: "Sam Hatfield"
+synopsis: An experimental document database for org-mode files
+description: |
+  zation is an experiment based on an idea to make a document database for
+  org-mode. The idea is that it's something like MongoDB but for org-mode files
+  instead of JSON. Please take a look at the README.org file to get a more
+  detailed explaination of the reasons and goals of the project, but the TL;DR
+  is I want to have a SQLite-like database for my org files that will have all
+  the same features that org-mode has and much more.
+
+  A basic roadmap is for each odd-numbered release, I'll have a new org-mode
+  markup parsed and stored in the database, and the following even-numbered
+  release ships features related to that org-mode feature. For example, the
+  first thing I'm going to parse is the outline-mode stars into a tree, and the
+  first feature is going to be pretty-printing that tree.
+category: Database
+
+extra-source-files:
+- CHANGELOG.md
+- LICENSE.md
+- package.yaml
+- README.md
+- stack.yaml
+
+ghc-options: -Wall
+
+library:
+  dependencies:
+  - base
+  - parsec
+  source-dirs: library
+
+executables:
+  zation:
+    source-dirs: executable
+    main: Main.lhs
+    dependencies:
+    - base
+    - zation
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+
+benchmarks:
+  zation-benchmarks:
+    source-dirs: benchmark
+    main: Main.hs
+    dependencies:
+    - base
+    - zation
+    - criterion
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+
+tests:
+  zation-test-suite:
+    source-dirs: test-suite
+    main: Main.hs
+    dependencies:
+    - base
+    - zation
+    - tasty
+    - tasty-hspec
+    - parsec
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
