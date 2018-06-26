@@ -76,7 +76,7 @@
 
 *** The roadmap
 
-**** Version 0.x release series
+**** Version 0.x release series: parsers & printers
      My goal is to implement the different parts of the org-mode markup from
      easiest to hardest. This is my estimation of that, but I'm probably going
      to get it wrong. For each feature listed, there will be two parts of the
@@ -88,9 +88,10 @@
      database and pretty print it into two formats: org-mode, and Pandoc AST.
 
      The second part of the release for that feature will include some basic
-     features based on org-mode's feature-set. Advanced features will be their
-     own releases. For example: I want to store multiple documents in the
-     database. When I get that done, file hyperlinks will be added.
+     features based on org-mode's feature-set. Some features will be their own
+     releases, paired with a related feature. For example: I want to store
+     multiple documents in the database in =>=1.x=. When I get that done, file hyperlinks
+     will be added.
 
 ***** Parse outlines 
       This is a good first step, because the markup is foundational yet simple,
@@ -131,7 +132,7 @@
       - Index tags in another part of the database
       - CRUD for tags, displays views of tags and headlines with specific tag
 
-***** TOOD keywordssending the AST to the
+***** TOOD keywords
       - Parse =TODO= and =DONE= keywords (the default in org-mode). Configurable keywords come later
       - basic agenda view, where headlines are displayed without heirarchy and filtered by keywords
 
@@ -156,7 +157,7 @@
 ***** options and comments
       - Parse comments, including option comments
       - Display or hide comments when printing
-      - Option API, including options embedded in properties
+      - Implement document options as properties on the root of the document tree
     
 ***** timestamps
       - Parse timestamps, both active and inactive
@@ -169,3 +170,42 @@
 ***** tables
       - Parse org tables, but not formula syntax (I'm scared of that)
       - basic CLI querying and CRUD'ing
+
+**** Version 1.x release series: org clone
+     The goal in this series is to add features from Org to =zation=. By this
+     point, all of the parts of =org-mode= syntax should be supported, so this
+     is when we start to add more complex features, like agenda grid view. By
+     the time that the 1.x series is "finished", it should have approximate
+     parity to a specific version of org, which is something I'll decide when
+     the time comes. But, there should be room for some extensions. Another
+     thing that I'd work on is making sure that the API for the library and CLI
+     are solid and simple. I'd also want to launch editor plugins/packages for
+     the database, specifically emacs and vim. The emacs package would be a
+     minor mode that integrates with =org-mode=. The vim plugin would add
+     wrappers for the CLI and some autocommands for the buffers generated from
+     that CLI. If there is a userbase besides me, I'd want to open it up for
+     other editors as well.
+
+**** Version 2.x release series: making a web service, internal improvements for performance & security
+     The goal in this series would be to grow =zation= into a secure, performant
+     web service. HOWEVER, the goal would not be to make =zation= a production
+     system for teams, that'd come in v3.
+
+     For the web dev part, I'd likely use something that generates a RESTful API
+     from the library bindings, and then add an RPC style system for more
+     complex operations. At this point, I'd also start writing a web-based
+     client for =zation=, probably written in something like Elm, using the
+     aforementioned RPC API. The original CLI would be separated into it's own
+     package, and a new CLI that translates commands into API calls would be
+     shipped as well. The idea is that the original CLI would be maintained as
+     long as folx would want to use it, if anyone. If it needs to be deprecated,
+     that'd happen in v3.
+
+     For the security and performance part, I'd want to consult with experts to
+     learn how to find problem areas and fix them.
+
+**** Version 3.x release series: support other users
+     The v3.x series will only ever happen if people other than me like this
+     project and start using it. At this point, I'd work on making the UI better
+     for all the clients, and to make the database itself support many
+     connections and users and all that.
