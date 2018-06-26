@@ -65,7 +65,7 @@ going to work on parsing later.
 
 >   headline <- many $ noneOf ['\n']
 
-Finally, we return our pai
+Finally, we return our pair
 
 >   return (Outline (length stars) headline [])
 
