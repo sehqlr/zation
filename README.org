@@ -35,8 +35,7 @@
    replication, clusters, multiple clients accessing a database instance, &c.
 
 ** How?
-   Now for technical details
- 
+   I want to lay out the dependencies of the project, and the roadmap.
 *** The Tech Stack
 
 **** Haskell Stack
@@ -59,10 +58,8 @@
      =QuickCheck=. I've used =hspec= and other BDD-style testing frameworks
      before, and I'm really excited to learn how to use =QuickCheck=
 
-     As for =criterio=, I've never actually written any kind of benchmarking
+     As for =criterion=, I've never actually written any kind of benchmarking
      tests, so that'll be a whole new subject for me to explore.
-
-**** Some kind of CLI lib, maybe Brick??
 
 **** Pandoc
      The Pandoc library will then be used for exporting to other formats. I'm
@@ -74,138 +71,199 @@
      been wanting to learn it for some time, and I think this will be a perfect
      project for it.
 
+**** Brick
+     I'm very interested in using the Editor type in Brick for the interactive
+     shell for the CLI.
 *** The roadmap
+    So far, the roadmap just includes my plans for the library and the CLI. It
+    may be expanded to other projects or repos as they come. If, beyond my
+    comprehension, this project actually became popular, I'd move these kinds of
+    documents into a separate repo.
+**** The library
+     The versions for the library would be referenced by other code repos. The
+     "Maturity" stage at the end is after any additional SemVer stages I'd add
+     in. 
+***** Version 0.x release series: parsers & printers
+      My goal is to implement the different parts of the org-mode markup from
+      easiest to hardest. This is my estimation of that, but I'm probably going
+      to get it wrong. For each feature listed, there will be two parts of the
+      release.
 
-**** Version 0.x release series: parsers & printers
-     My goal is to implement the different parts of the org-mode markup from
-     easiest to hardest. This is my estimation of that, but I'm probably going
-     to get it wrong. For each feature listed, there will be two parts of the
-     release.
+      The first part of that release will be implementing the parser and the
+      printer for that feature. The parser portion will be able to read in data
+      and store it into the database. The printer portion will read data from the
+      database and pretty print it into two formats: org-mode, and Pandoc AST.
 
-     The first part of that release will be implementing the parser and the
-     printer for that feature. The parser portion will be able to read in data
-     and store it into the database. The printer portion will read data from the
-     database and pretty print it into two formats: org-mode, and Pandoc AST.
+      The second part of the release for that feature will include some basic
+      features based on org-mode's feature-set. Some features will be their own
+      releases, paired with a related feature. For example: I want to store
+      multiple documents in the database in =>=1.x=. When I get that done, file hyperlinks
+      will be added.
 
-     The second part of the release for that feature will include some basic
-     features based on org-mode's feature-set. Some features will be their own
-     releases, paired with a related feature. For example: I want to store
-     multiple documents in the database in =>=1.x=. When I get that done, file hyperlinks
-     will be added.
+****** Org features
+      * outlines 
+        This is a good first step, because the markup is foundational yet simple,
+        and I can build a good CLI to extend.
+        - Parse headlines and load that into an n-tree
+        - print the outline as multiple asterisks, and as a single asterisk with indentation
+        - basic CRUD commands for the tree
 
-***** Parse outlines 
-      This is a good first step, because the markup is foundational yet simple,
-      and I can build a good CLI to extend.
-      - Parse headlines and load that into an n-tree
-      - print the outline as multiple asterisks, and as a single asterisk with indentation
-      - basic CRUD commands for the tree
+      * body text
+        - parse body text into leaves in the tree, with lists of paragraph blocks
+        - print them aligned with outline text and word wrapped
+        - CRUD for body text, and clone of occur for search
 
-***** body text
-      - parse body text into leaves in the tree, with lists of paragraph blocks
-      - print them aligned with outline text and word wrapped
-      - CRUD for body text, and clone of occur for search
+      * ordered and unordered lists
+        - Parse ordered and unordered lists with the many supported tokens, and nesting
+        - Print lists with nesting and body text, indented correctly
+        - CRUD for lists
+        - configuration for indentation characters
 
-***** ordered and unordered lists
-      - Parse ordered and unordered lists with the many supported tokens, and nesting
-      - Print lists with nesting and body text, indented correctly
-      - CRUD for lists
-      - configuration for indentation characters
+      * basic formatting
+        - parse and print formatting markup, except for hyperlinks and timestamps
+        - figure out the most efficient way of storing formatting info in database
+        - add ANSI escape codes for formatting to consoles, add formatting to Pandoc AST
 
-***** basic formatting
-      - parse and print formatting markup, except for hyperlinks and timestamps
-      - figure out the most efficient way of storing formatting info in database
-      - add ANSI escape codes for formatting to consoles, add formatting to Pandoc AST
-
-***** definition lists
-      - Parse and print definition lists
-      - dictionary-style API for these
+      * definition lists
+        - Parse and print definition lists
+        - dictionary-style API for these
         
-***** blocks
-      With "blocks" I mean "sections of body text between BEGIN and END lines"
-      - Parse block sections, storing the specific kind of block in the data structure
-      - Creating a sum type for the different kind of blocks, extending the paragraph block
-      - CRUD for blocks, and commands to convert existing paragraphs to these new blocks
-      - executing code and literate programming in source code blocks comes later
+      * blocks
+        With "blocks" I mean "sections of body text between BEGIN and END lines"
+        - Parse block sections, storing the specific kind of block in the data structure
+        - Creating a sum type for the different kind of blocks, extending the paragraph block
+        - CRUD for blocks, and commands to convert existing paragraphs to these new blocks
+        - executing code and literate programming in source code blocks comes later
 
-***** headline tags
-      - Parse tags in headlines
-      - Index tags in another part of the database
-      - CRUD for tags, displays views of tags and headlines with specific tag
+      * headline tags
+        - Parse tags in headlines
+        - Index tags in another part of the database
+        - CRUD for tags, displays views of tags and headlines with specific tag
 
-***** TOOD keywords
-      - Parse =TODO= and =DONE= keywords (the default in org-mode). Configurable keywords come later
-      - basic agenda view, where headlines are displayed without heirarchy and filtered by keywords
+      * TOOD keywords
+        - Parse =TODO= and =DONE= keywords (the default in org-mode). Configurable keywords come later
+        - basic agenda view, where headlines are displayed without heirarchy and filtered by keywords
 
-***** priority cookies in headlines
-      - Parse priority cookies in headlines
-      - agenda view with sorting based on priority
+      * priority cookies in headlines
+        - Parse priority cookies in headlines
+        - agenda view with sorting based on priority
 
-***** checklists and progress cookies in headlines
-      - Parse checklist items within lists and progress cookies
-      - basic todo list functionality
-      - tracking and untracking progress on checklists
+      * checklists and progress cookies in headlines
+        - Parse checklist items within lists and progress cookies
+        - basic todo list functionality
+        - tracking and untracking progress on checklists
 
-***** hyperlinks
-      - Parse and print hyperlinks, starting with URLs
-      - API for searching for URLs, and opening them in a browser or sending to clipboard
+      * hyperlinks
+        - Parse and print hyperlinks, starting with URLs
+        - API for searching for URLs, and opening them in a browser or sending to clipboard
 
-***** properties on headlines/subtrees
-      - Parse property drawers under a headline
-      - Display or hide properties when printing
-      - Property API (and associated CLI commands)
+      * properties on headlines/subtrees
+        - Parse property drawers under a headline
+        - Display or hide properties when printing
+        - Property API (and associated CLI commands)
 
-***** options and comments
-      - Parse comments, including option comments
-      - Display or hide comments when printing
-      - Implement document options as properties on the root of the document tree
+      * options and comments
+        - Parse comments, including option comments
+        - Display or hide comments when printing
+        - Implement document options as properties on the root of the document tree
     
-***** timestamps
-      - Parse timestamps, both active and inactive
-      - basic Calendar API, like quering for items, inserting timestamps
+      * timestamps
+        - Parse timestamps, both active and inactive
+        - basic Calendar API, like quering for items, inserting timestamps
 
-***** scheduling keywords
-      - parse SCHEDULED and DEADLINE keywords for headlines
-      - agenda view sorting for scheduled items, but not agenda grid view
+      * scheduling keywords
+        - parse SCHEDULED and DEADLINE keywords for headlines
+        - agenda view sorting for scheduled items, but not agenda grid view
         
-***** tables
-      - Parse org tables, but not formula syntax (I'm scared of that)
-      - basic CLI querying and CRUD'ing
+      * tables
+        - Parse org tables, but not formula syntax (I'm scared of that)
+        - basic querying and CRUD'ing
 
-**** Version 1.x release series: org clone
-     The goal in this series is to add features from Org to =zation=. By this
-     point, all of the parts of =org-mode= syntax should be supported, so this
-     is when we start to add more complex features, like agenda grid view. By
-     the time that the 1.x series is "finished", it should have approximate
-     parity to a specific version of org, which is something I'll decide when
-     the time comes. But, there should be room for some extensions. Another
-     thing that I'd work on is making sure that the API for the library and CLI
-     are solid and simple. I'd also want to launch editor plugins/packages for
-     the database, specifically emacs and vim. The emacs package would be a
-     minor mode that integrates with =org-mode=. The vim plugin would add
-     wrappers for the CLI and some autocommands for the buffers generated from
-     that CLI. If there is a userbase besides me, I'd want to open it up for
-     other editors as well.
+***** Version 1.x release series: actually a database
+      The goal in this series is to make =zation= an actual database
+      - localhost web server that makes zation accessible to other programs
+      - consistent API for interacting with editors
+      - advanced features from org
+      - database features, like simple syncing and a binary persistence format
+      
+      At this point, all of the parts of =org-mode= syntax should be supported,
+      so this is when we start to add more complex features, like agenda grid
+      view and literate programming. By the time that the 1.x series is
+      "finished", it should have approximate parity to a specific version of
+      org, which is something I'll decide when the time comes. But, there should
+      be room for some extensions, like a simple sync workflow with some
+      automation.
 
-**** Version 2.x release series: making a web service, internal improvements for performance & security
-     The goal in this series would be to grow =zation= into a secure, performant
-     web service. HOWEVER, the goal would not be to make =zation= a production
-     system for teams, that'd come in v3.
+      Another thing that I'd work on is making sure that the API for the library
+      and CLI are solid and simple. I'd also want to launch editor
+      plugins/packages for the database, specifically emacs and vim. The emacs
+      package would be a minor mode that integrates with =org-mode=. The vim
+      plugin would add wrappers for the CLI and some autocommands for the
+      buffers generated from that CLI. If there is a userbase besides me, I'd
+      want to open it up for other editors as well.
 
-     For the web dev part, I'd likely use something that generates a RESTful API
-     from the library bindings, and then add an RPC style system for more
-     complex operations. At this point, I'd also start writing a web-based
-     client for =zation=, probably written in something like Elm, using the
-     aforementioned RPC API. The original CLI would be separated into it's own
-     package, and a new CLI that translates commands into API calls would be
-     shipped as well. The idea is that the original CLI would be maintained as
-     long as folx would want to use it, if anyone. If it needs to be deprecated,
-     that'd happen in v3.
+***** Version 2.x release series: security
+      The goal in this series would be to make =zation= secure. HOWEVER, the
+      goal would not be to make =zation= a production system for teams, that'd
+      come in v3. I'd want to consult with experts to learn how to find problem
+      areas and fix them.
 
-     For the security and performance part, I'd want to consult with experts to
-     learn how to find problem areas and fix them.
+***** Version 3.x release series: org-mode-as-a-small-service
+      The v3.x series will only ever happen if people other than me like this
+      project and start using it. This series would make zation be a multiuser
+      system, able to run on a web server and have teams use it to better
+      organize themselves.
 
-**** Version 3.x release series: support other users
-     The v3.x series will only ever happen if people other than me like this
-     project and start using it. At this point, I'd work on making the UI better
-     for all the clients, and to make the database itself support many
-     connections and users and all that.
+      Like with the security improvements series, I'd consult with experts to
+      make the library performant. Additionally, I might write a formal
+      verification of the system, to make sure that it's correct.
+
+***** Version 4.x release series: distributed computing
+      If the project makes it this far, I'd want to make instances of the
+      database be able to communicate with other instances to form small
+      networks, with message passing, sharding, fault tolerance and all that
+      jazz. For example, the sync workflow would become highly automated.
+
+***** Version 5.x release series: web scale
+      The main goal of this stage would be to make zation able to operate on a
+      global scale over the web, building on the v4.x series. There would be
+      auxillary code bases to define infrastructure requirements
+
+***** Maturity
+      Once web scale is achieved, the idea is that the database would become a
+      mature system, where extensions would be written in other projects, and
+      =zation= would hold off on new features. I'd consider changing the version
+      scheme to something like CalVer (tag versions by date of release
+      directly), or something else, I'm not sure.
+
+**** The CLI client
+     The MAJOR version numbers for the main CLI client would closely follow the
+     versions for the library.
+***** Version 0.x release series: batch mode, loading the lib directly
+      The v0.x series will focus on a batch mode interface, similar to =sed=.
+      Since the library won't be able to operate as a server yet, the CLI will
+      import the library directly, and use file IO to load/save the files. The
+      difference from =sed= is that the database will fully parse the file,
+      perform the edits, then print the result. So, instead of pattern matching,
+      it's going to operate more like do-notation.
+***** Version 1.x release series: interactive shell
+      This series establishes the CLI as a interactive shell, able to send and
+      receieve messages from the database. The messages would be carried over
+      from v0.x, with tweaks if needed. I would also start to do UI research for
+      the next version series.
+***** Version 2.x release series: UI improvements
+      While the database would be getting security improvements, the CLI would
+      be getting UI improvements. I would consult with experts to get this done.
+***** Version 3.x release series: connect to any instance
+      Since this would be the org-mode-as-a-small-service era for the database,
+      the CLI would need to be able to connect to non-local instances. It would
+      also be good to build in some concurrency and performance tweaks as well.
+***** Version 4.x release series: cluster tooling
+      If we get this far, the CLI would add commands/tooling for managing
+      clusters of zation instances. My goal would be to leverage Dhall for the
+      majority of that configuration.
+***** Version 5.x release series: embedded zation instance to manage zation clusters
+      This is probably my wackiest idea yet, but at web scale, the kind of
+      complexity of deploying that deserves a database to store and organize it.
+      So, the CLI would have an option to spin up a simple zation to keep track
+      of cluster state.

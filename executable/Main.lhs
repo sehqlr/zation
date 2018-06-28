@@ -1,4 +1,4 @@
-> import qualified Zation
+> import qualified Database.Zation as Z
 
 > main :: IO ()
-> main = Zation.main
+> main = Z.main

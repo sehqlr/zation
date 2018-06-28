@@ -1,6 +1,8 @@
 This is the Parser module for zation
 
-> module Parser ( ParseTree, outline ) where
+> module Database.Zation.Parser (
+>   ParseTree(Body,Outline), Level, Headline, outline
+> ) where
 
 /IMPORTS/
 
@@ -11,7 +13,7 @@ learn the concepts. I _think_ I'm ready to start using Parsec, but I may have to
 abandon that if I get overwhelmed.
 
 > import Text.Parsec
-> import Text.Parsec.Char()
+> import Text.Parsec.Char ()
 
 /TYPES/
 
@@ -25,7 +27,7 @@ because I'm expecting folx to interact with the ParseTree than the Storage.Tree.
 I may be wrong: in that case, I'll change the other names to be more
 descriptive.
 
-> data ParseTree a = Body a | Outline Level Headline [ParseTree a] deriving (Show, Read)
+> data ParseTree a = Body a | Outline Level Headline [ParseTree a] deriving (Eq, Read, Show)
 
 > type Level = Int
 > type Headline = String

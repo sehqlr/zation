@@ -1,4 +1,4 @@
-> module Storage (Tree) where
+> module Database.Zation.Storage (Tree) where
 
 I'm going to try to use the question from SO to help me
 https://stackoverflow.com/questions/4431809/trees-in-haskell
@@ -17,3 +17,4 @@ can implement directory variables as properties as well. Woah!
 I'm going to have a separate function to pretty-print the Tree in org-mode
 syntax so that the output of show for Tree is valid Haskell code, as suggested
 by Real World Haskell.
+

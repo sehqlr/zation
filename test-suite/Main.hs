@@ -5,7 +5,8 @@ import qualified Test.Tasty
 -- Hspec is one of the providers for Tasty. It provides a nice syntax for
 -- writing tests. Its website has more info: <https://hspec.github.io>.
 import Test.Tasty.Hspec
-import qualified Parser
+
+import qualified Database.Zation.Parser as P
 import Text.Parsec (parse)
 
 main :: IO ()
@@ -16,4 +17,4 @@ main = do
 spec :: Spec
 spec = parallel $ do
     it "a simple headline gets parsed by Parser.headline, leaving off the body text" $ do
-        parse Parser.headline "" "* NEWS\nso much news" `shouldBe` Right ("*", "NEWS")
+        parse P.outline "" "* NEWS\nso much news" `shouldBe` Right (P.Outline 1 "NEWS" [])

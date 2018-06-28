@@ -1,9 +1,9 @@
 > -- | An example module.
-> module Zation (main) where
+> module Database.Zation (main) where
 
-> import Parser
+> import Database.Zation.Parser
 > import Text.Parsec (parse)
 
 > -- | An example function.
 > main :: IO ()
-> main = print (parse headline "test" "* Breaking News, Zation can parse org-mode headlines, sorta")
+> main = print (parse outline "test" "* Breaking News, Zation can parse org-mode headlines, sorta")
