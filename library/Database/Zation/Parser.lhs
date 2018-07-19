@@ -1,7 +1,7 @@
 This is the Parser module for zation
 
 > module Database.Zation.Parser (
->   ParseTree(Body,Outline), Level, Headline, outline
+>   ParseTree(Text,Outline), outline
 > ) where
 
 /IMPORTS/
@@ -12,6 +12,7 @@ library to follow along with the tutorial I found
 learn the concepts. I _think_ I'm ready to start using Parsec, but I may have to
 abandon that if I get overwhelmed.
 
+> import Control.Applicative ( (<$>) )
 > import Text.Parsec
 > import Text.Parsec.Char ()
 
@@ -20,17 +21,18 @@ abandon that if I get overwhelmed.
 The reason why I feel we need a separate ParseTree from the Storage.Tree is that
 I want to preserve parse order of elements from the org-mode file. I want to be
 able to parse a file and then print it, and have the result be equivalent
-to the original file.
+to the original file. I'm basing it on the parse trees I've seen from Wikipedia
+and from linguistics textbooks, where the structure of the parse is in the
+internal nodes and the text is contained in the leaves. The goal is that if you
+removed leaves from the tree in depth-first order, you'd get a rudimentary
+org-mode file, without any good formatting.
 
 So, I'm going to be more explicit in the names of the types in this module, only
 because I'm expecting folx to interact with the ParseTree than the Storage.Tree.
 I may be wrong: in that case, I'll change the other names to be more
 descriptive.
 
-> data ParseTree a = Body a | Outline Level Headline [ParseTree a] deriving (Eq, Read, Show)
-
-> type Level = Int
-> type Headline = String
+> import Database.Zation.Storage (Tree)
 
 For the first version of this, I'm only worrying about parsing the outline
 structure and then keeping the rest of the text as leaves. I'm sure that this
@@ -52,7 +54,7 @@ The return type is just a pair of strings, just because I want to have an
 intermediate representation before loading it into the parse tree that I can
 see. This might be the right type though?
 
-> outline :: Parsec String st (ParseTree String)
+> outline :: Parsec String st (Tree String)
 > outline = do
 
 The first thing we need in the do-notation is to parse out the "stars" of the
@@ -69,5 +71,17 @@ going to work on parsing later.
 
 Finally, we return our pair
 
->   return (Outline (length stars) headline [])
+>   return (Outline (length stars) [Text headline])
 
+OK, now that we've written our outline parser, the body text parser (basically everything else) should be straightforward
+
+> body :: Parsec String st (Tree String)
+> body = do
+
+Consume everything until you get to a star
+
+>   t <- many $ noneOf ['*']
+>   return $ Text t
+
+> parseText :: Parsec String st (Tree String)
+> parseText = foldr (Outline 0 [Text ""]) <$> try outline <|> body <?> "Failure"

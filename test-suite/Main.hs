@@ -16,5 +16,5 @@ main = do
 
 spec :: Spec
 spec = parallel $ do
-    it "a simple headline gets parsed by Parser.headline, leaving off the body text" $ do
+    it "outline returns a Outline, leaving off the body text" $ do
         parse P.outline "" "* NEWS\nso much news" `shouldBe` Right (P.Outline 1 "NEWS" [])

@@ -12,15 +12,10 @@ description: |
   zation is an experiment based on an idea to make a document database for
   org-mode. The idea is that it's something like MongoDB but for org-mode files
   instead of JSON. Please take a look at the README.org file to get a more
-  detailed explaination of the reasons and goals of the project, but the TL;DR
-  is I want to have a SQLite-like database for my org files that will have all
-  the same features that org-mode has and much more.
+  detailed explaination of the reasons, goals, and a roadmap of the project, but
+  the TL;DR is I want to have a SQLite-like database for my org files that will
+  have all the same features that org-mode has and much more.
 
-  A basic roadmap is for each odd-numbered release, I'll have a new org-mode
-  markup parsed and stored in the database, and the following even-numbered
-  release ships features related to that org-mode feature. For example, the
-  first thing I'm going to parse is the outline-mode stars into a tree, and the
-  first feature is going to be pretty-printing that tree.
 category: Database
 
 extra-source-files:
