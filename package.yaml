@@ -31,6 +31,8 @@ library:
   dependencies:
   - base
   - parsec
+  - containers
+  - prettyprinter
   source-dirs: library
 
 executables:

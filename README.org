@@ -74,12 +74,12 @@
 **** Brick
      I'm very interested in using the Editor type in Brick for the interactive
      shell for the CLI.
-
+**** containers
+     I'm going to use the Tree and the Map types
+**** prettyprinter
 **** Scotty
 **** Other dependencies
-***** containers
 ***** store
-***** prettyprinter
 
 *** brief roadmap
     see this blog post for more details

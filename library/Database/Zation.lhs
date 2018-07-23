@@ -6,4 +6,4 @@
 
 > -- | An example function.
 > main :: IO ()
-> main = print (parse outline "test" "* Breaking News, Zation can parse org-mode headlines, sorta")
+> main = print (parse headline "test" "* Breaking News, Zation can parse org-mode headlines, sorta")

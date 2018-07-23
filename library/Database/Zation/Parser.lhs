@@ -1,7 +1,7 @@
 This is the Parser module for zation
 
 > module Database.Zation.Parser (
->   ParseTree(Text,Outline), outline
+>   section, headline, parseText
 > ) where
 
 /IMPORTS/
@@ -12,7 +12,6 @@ library to follow along with the tutorial I found
 learn the concepts. I _think_ I'm ready to start using Parsec, but I may have to
 abandon that if I get overwhelmed.
 
-> import Control.Applicative ( (<$>) )
 > import Text.Parsec
 > import Text.Parsec.Char ()
 
@@ -32,7 +31,7 @@ because I'm expecting folx to interact with the ParseTree than the Storage.Tree.
 I may be wrong: in that case, I'll change the other names to be more
 descriptive.
 
-> import Database.Zation.Storage (Tree)
+> import Database.Zation.Types
 
 For the first version of this, I'm only worrying about parsing the outline
 structure and then keeping the rest of the text as leaves. I'm sure that this
@@ -54,11 +53,12 @@ The return type is just a pair of strings, just because I want to have an
 intermediate representation before loading it into the parse tree that I can
 see. This might be the right type though?
 
-> outline :: Parsec String st (Tree String)
-> outline = do
+> headline :: Parsec String st Outline
+> headline = do
 
 The first thing we need in the do-notation is to parse out the "stars" of the
-start of a headline in org-mode, followed by a space
+start of a headline in org-mode, followed by a space, and load the stars into a
+Stars type
 
 >   stars <- many1 (char '*')
 >   _ <- char ' '
@@ -67,21 +67,21 @@ Next, we parse the headline, which is any number of characters, followed by a
 new line. There are quite a few org-mode features embedded in headlines that I'm
 going to work on parsing later.
 
->   headline <- many $ noneOf ['\n']
+>   title <- many $ noneOf ['\n']
 
 Finally, we return our pair
 
->   return (Outline (length stars) [Text headline])
+>   return (Headline (length stars) title)
 
 OK, now that we've written our outline parser, the body text parser (basically everything else) should be straightforward
 
-> body :: Parsec String st (Tree String)
-> body = do
+> section :: Parsec String st Outline
+> section = do
 
 Consume everything until you get to a star
 
 >   t <- many $ noneOf ['*']
->   return $ Text t
+>   return (Section t)
 
-> parseText :: Parsec String st (Tree String)
-> parseText = foldr (Outline 0 [Text ""]) <$> try outline <|> body <?> "Failure"
+> parseText :: Parsec String st Outline
+> parseText = try headline <|> section <?> "Failure"
